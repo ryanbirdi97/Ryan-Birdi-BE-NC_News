@@ -33,7 +33,7 @@ describe("GET /api/topics", () => {
 });
 
 describe("GET /api/articles/:article_id", () => {
-  test.only("responds with an article object of given id", () => {
+  test("responds with an article object of given id", () => {
     const articleID = 1;
     return request(app)
       .get(`/api/articles/${articleID}`)
