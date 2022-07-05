@@ -74,6 +74,26 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+      });
+  });
+});
+describe("GET /api/users", () => {
+  test("responds with an array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).toBeInstanceOf(Array);
+        body.users.forEach((users) => {
+          expect(users).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
+        });
+=======
 describe("PATCH /api/articles/:article_id", () => {
   test("request body accepts an object which updates the votes of the given article id", () => {
     const articleID = 1;
@@ -139,6 +159,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe(`Bad Request`);
+
       });
   });
 });

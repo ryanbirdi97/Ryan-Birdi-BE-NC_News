@@ -20,6 +20,11 @@ exports.fetchArticleId = (id) => {
     });
 };
 
+exports.fetchUsers = () => {
+  return db.query("SELECT * FROM users").then((result) => {
+    return result.rows;
+  });
+=======
 exports.updateVotes = (id, votes) => {
   if (!votes.inc_votes) {
     return Promise.reject({
