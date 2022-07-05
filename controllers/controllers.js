@@ -1,4 +1,10 @@
 const { fetchTopics, fetchArticleId, fetchUsers } = require("../models/models");
+=======
+const {
+  fetchTopics,
+  fetchArticleId,
+  updateVotes,
+} = require("../models/models");
 
 exports.getTopics = (req, res) => {
   fetchTopics().then((topics) => {
@@ -21,4 +27,15 @@ exports.getUsers = (req, res) => {
   fetchUsers().then((users) => {
     res.status(200).send({ users });
   });
+=======
+exports.patchVotes = (req, res, next) => {
+  const { article_id } = req.params;
+  const votes = req.body;
+  updateVotes(article_id, votes)
+    .then((updatedArticle) => {
+      res.status(200).send({ updatedArticle });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

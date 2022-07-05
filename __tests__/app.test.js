@@ -39,7 +39,6 @@ describe("GET /api/articles/:article_id", () => {
       .get(`/api/articles/${articleID}`)
       .expect(200)
       .then(({ body }) => {
-        console.log(body.article);
         expect(body.article).toBeInstanceOf(Object);
         expect(body.article.article_id).toEqual(articleID);
         expect(body.article).toEqual(
@@ -75,13 +74,15 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+      });
+  });
+});
 describe("GET /api/users", () => {
   test("responds with an array of user objects", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(body.users).toBeInstanceOf(Array);
         body.users.forEach((users) => {
           expect(users).toEqual(
@@ -92,6 +93,73 @@ describe("GET /api/users", () => {
             })
           );
         });
+=======
+describe("PATCH /api/articles/:article_id", () => {
+  test("request body accepts an object which updates the votes of the given article id", () => {
+    const articleID = 1;
+    const updateVote = { inc_votes: 5 };
+    return request(app)
+      .patch(`/api/articles/${articleID}`)
+      .send(updateVote)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedArticle.votes).toBe(105);
+      });
+  });
+  test("request body accepts an object which decrements the votes if number is negative of the given article id", () => {
+    const articleID = 1;
+    const updateVote = { inc_votes: -5 };
+    return request(app)
+      .patch(`/api/articles/${articleID}`)
+      .send(updateVote)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.updatedArticle.votes).toBe(95);
+      });
+  });
+  test("throws an error if article ID does not exist", () => {
+    const articleID = 1010;
+    const updateVote = { inc_votes: 5 };
+    return request(app)
+      .patch(`/api/articles/${articleID}`)
+      .send(updateVote)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Article id not found`);
+      });
+  });
+  test("throws an error if article ID is an invalid data type", () => {
+    const articleID = "dog";
+    const newVote = { inc_votes: 2 };
+    return request(app)
+      .patch(`/api/articles/${articleID}`)
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad Request`);
+      });
+  });
+  test("throws an error if inc_votes is an invalid data type", () => {
+    const articleID = 1;
+    const newVote = { inc_votes: "dog" };
+    return request(app)
+      .patch(`/api/articles/${articleID}`)
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad Request`);
+      });
+  });
+  test("throws an error if votes is an empty object", () => {
+    const articleID = 1;
+    const newVote = {};
+    return request(app)
+      .patch(`/api/articles/${articleID}`)
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad Request`);
+
       });
   });
 });
