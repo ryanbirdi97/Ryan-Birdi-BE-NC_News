@@ -20,11 +20,6 @@ exports.fetchArticleId = (id) => {
     });
 };
 
-exports.fetchUsers = () => {
-  return db.query("SELECT * FROM users").then((result) => {
-    return result.rows;
-  });
-=======
 exports.updateVotes = (id, votes) => {
   if (!votes.inc_votes) {
     return Promise.reject({
@@ -49,4 +44,10 @@ exports.updateVotes = (id, votes) => {
       }
       return result.rows[0];
     });
+};
+
+exports.fetchUsers = () => {
+  return db.query("SELECT * FROM users").then((result) => {
+    return result.rows;
+  });
 };
