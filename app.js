@@ -1,5 +1,9 @@
 const express = require("express");
-const { getTopics, getArticleId } = require("./controllers/controllers");
+const {
+  getTopics,
+  getArticleId,
+  getUsers,
+} = require("./controllers/controllers");
 const {
   psqlErrorHandler,
   unhandledErrors,
@@ -13,6 +17,8 @@ app.use(express.json());
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:article_id", getArticleId);
+
+app.get("/api/users", getUsers);
 
 //Error Handlers
 app.use(psqlErrorHandler);
