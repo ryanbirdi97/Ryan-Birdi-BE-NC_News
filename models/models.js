@@ -21,6 +21,12 @@ exports.fetchArticleId = (id) => {
 };
 
 exports.updateVotes = (id, votes) => {
+  if (!votes.inc_votes) {
+    return Promise.reject({
+      status: 400,
+      msg: `Bad Request`,
+    });
+  }
   return db
     .query(
       `UPDATE articles

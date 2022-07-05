@@ -119,4 +119,26 @@ describe("PATCH /api/articles/:article_id", () => {
         expect(body.msg).toBe(`Bad Request`);
       });
   });
+  test("throws an error if inc_votes is an invalid data type", () => {
+    const articleID = 1;
+    const newVote = { inc_votes: "dog" };
+    return request(app)
+      .patch(`/api/articles/${articleID}`)
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad Request`);
+      });
+  });
+  test("throws an error if votes is an empty object", () => {
+    const articleID = 1;
+    const newVote = {};
+    return request(app)
+      .patch(`/api/articles/${articleID}`)
+      .send(newVote)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad Request`);
+      });
+  });
 });
