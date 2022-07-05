@@ -9,7 +9,7 @@ exports.fetchTopics = () => {
 exports.fetchArticleId = (id) => {
   return db
     .query(
-      ` SELECT articles.*, COUNT(comment_id) AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`,
+      `SELECT articles.*, COUNT(comment_id)::INT AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`,
       [id]
     )
     .then(({ rows }) => {
@@ -19,7 +19,7 @@ exports.fetchArticleId = (id) => {
           msg: `Article id not found`,
         });
       }
-      rows[0].comment_count = +rows[0].comment_count;
+      // rows[0].comment_count = +rows[0].comment_count;
       return rows[0];
     });
 };
@@ -54,4 +54,14 @@ exports.fetchUsers = () => {
   return db.query("SELECT * FROM users").then((result) => {
     return result.rows;
   });
+};
+
+exports.fetchArticles = () => {
+  return db
+    .query(
+      `SELECT articles.*, COUNT(comment_id):: INT AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC`
+    )
+    .then((result) => {
+      return result.rows;
+    });
 };

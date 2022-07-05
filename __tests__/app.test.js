@@ -163,3 +163,40 @@ describe("GET /api/users", () => {
       });
   });
 });
+
+describe("GET /api/articles", () => {
+  test("responds with an array of article objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeInstanceOf(Array);
+        body.articles.forEach((users) => {
+          expect(users).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+  test("returned array is in date decending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body.articles);
+        expect(body.articles).toBeSortedBy("created_at", {
+          decending: true,
+          coerce: true,
+        });
+      });
+  });
+});
