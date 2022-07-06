@@ -55,10 +55,33 @@ exports.fetchUsers = () => {
   });
 };
 
-exports.fetchArticles = () => {
+exports.fetchArticles = (sort_by = "created_at", order = "desc", topic) => {
+  const validQueries = [
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+  ];
+  const validOrder = ["ASC", "DESC", "asc", "desc"];
+
+  if (!validQueries.includes(sort_by)) {
+    return Promise.reject({
+      status: 400,
+      msg: `Invalid sort by`,
+    });
+  }
+
+  if (!validOrder.includes(order)) {
+    return Promise.reject({
+      status: 400,
+      msg: `Invalid order`,
+    });
+  }
   return db
     .query(
-      `SELECT articles.*, COUNT(comment_id):: INT AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC`
+      `SELECT articles.*, COUNT(comment_id):: INT AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order}`
     )
     .then((result) => {
       return result.rows;
