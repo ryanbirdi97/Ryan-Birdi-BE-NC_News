@@ -49,9 +49,9 @@ exports.getArticles = (req, res) => {
 };
 
 exports.postArticleComment = (req, res, next) => {
-  const { articleID } = req.params;
+  const { article_id } = req.params;
   const newComment = req.body;
-  addComment(articleID, newComment)
+  addComment(article_id, newComment)
     .then((comment) => {
       res.status(201).send({ comment });
     })

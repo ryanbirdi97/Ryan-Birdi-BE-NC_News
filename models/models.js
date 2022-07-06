@@ -19,7 +19,6 @@ exports.fetchArticleId = (id) => {
           msg: `Article id not found`,
         });
       }
-      // rows[0].comment_count = +rows[0].comment_count;
       return rows[0];
     });
 };
@@ -66,14 +65,39 @@ exports.fetchArticles = () => {
     });
 };
 
-exports.addComment = (id, newComment) => {
+exports.addComment = (articleID, newComment) => {
   const { username, body } = newComment;
-  return db
-    .query(`INSERT INTO comments (author, body) VALUES ($1, $2)`, [
-      username,
-      body,
-    ])
-    .then((addedComment) => {
-      return addedComment.rows[0];
+  if (
+    username &&
+    typeof username === "string" &&
+    body &&
+    typeof body === "string" &&
+    Object.keys(newComment) !== 2
+  ) {
+    return db
+      .query(`SELECT * FROM articles WHERE article_id = $1`, [articleID])
+      .then(({ rows }) => {
+        if (rows.length === 0) {
+          return Promise.reject({
+            status: 404,
+            msg: `Article id not found`,
+          });
+        }
+      })
+      .then(() => {
+        return db
+          .query(
+            `INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *`,
+            [username, body, articleID]
+          )
+          .then(({ rows }) => {
+            return rows[0];
+          });
+      });
+  } else {
+    return Promise.reject({
+      status: 400,
+      msg: `Bad Request`,
     });
+  }
 };

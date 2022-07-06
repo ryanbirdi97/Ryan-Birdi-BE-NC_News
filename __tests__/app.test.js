@@ -192,11 +192,71 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        console.log(body.articles);
         expect(body.articles).toBeSortedBy("created_at", {
           decending: true,
           coerce: true,
         });
       });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: request body accepts an object to post a comment", () => {
+    const articleID = 1;
+    const newComment = { username: "icellusedkars", body: "This is a test" };
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toBeInstanceOf(Object);
+        expect(body.comment).toMatchObject({
+          body: newComment.body,
+          votes: expect.any(Number),
+          author: newComment.username,
+          article_id: articleID,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("400: if article id is wrong data type", () => {
+    const articleID = "dog";
+    const newComment = { username: "icellusedkars", body: "This is a test" };
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(400);
+  });
+  test("404: if article id does not exist", () => {
+    const articleID = 1010;
+    const newComment = { username: "icellusedkars", body: "This is a test" };
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(404);
+  });
+  test("400: if request body is an empty object", () => {
+    const articleID = 1;
+    const newComment = {};
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(400);
+  });
+  test("400: if request body only has 1 key", () => {
+    const articleID = 1;
+    const newComment = { username: "icellusedkars" };
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(400);
+  });
+  test("400: if request body key is the wrong datatype", () => {
+    const articleID = 1;
+    const newComment = { username: "icellusedkars", body: 1 };
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(400);
   });
 });
