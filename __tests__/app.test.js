@@ -207,7 +207,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get(`/api/articles/${articleID}/comments`)
       .expect(200)
       .then(({ body }) => {
-        console.log(body.comments);
         expect(body.comments).toBeInstanceOf(Array);
         expect(body.comments).toHaveLength(2);
         body.comments.forEach((comment) => {
