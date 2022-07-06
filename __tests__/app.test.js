@@ -207,7 +207,9 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get(`/api/articles/${articleID}/comments`)
       .expect(200)
       .then(({ body }) => {
+        console.log(body.comments);
         expect(body.comments).toBeInstanceOf(Array);
+        expect(body.comments).toHaveLength(2);
         body.comments.forEach((comment) => {
           expect(comment).toMatchObject({
             comment_id: expect.any(Number),
@@ -245,6 +247,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).toBeInstanceOf(Array);
+        expect(body.comments).toEqual([]);
       });
   });
 });
