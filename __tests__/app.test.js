@@ -192,11 +192,50 @@ describe("GET /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        console.log(body.articles);
         expect(body.articles).toBeSortedBy("created_at", {
           decending: true,
           coerce: true,
         });
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("responds with a array of comment objects of given id", () => {
+    const articleID = 5;
+    return request(app)
+      .get(`/api/articles/${articleID}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeInstanceOf(Array);
+        body.comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            article_id: articleID,
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+          });
+        });
+      });
+  });
+  test("404: responds with an error msg if the id does not exist", async () => {
+    const articleID = 1010;
+    return request(app)
+      .get(`/api/articles/${articleID}/comments`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Article id not found`);
+      });
+  });
+  test("400: responds with an error msg if the id is not a number", async () => {
+    const articleID = "dog";
+    return request(app)
+      .get(`/api/articles/${articleID}/comments`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe(`Bad Request`);
       });
   });
 });
