@@ -65,3 +65,15 @@ exports.fetchArticles = () => {
       return result.rows;
     });
 };
+
+exports.addComment = (id, newComment) => {
+  const { username, body } = newComment;
+  return db
+    .query(`INSERT INTO comments (author, body) VALUES ($1, $2)`, [
+      username,
+      body,
+    ])
+    .then((addedComment) => {
+      return addedComment.rows[0];
+    });
+};
