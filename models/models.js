@@ -67,7 +67,7 @@ exports.fetchArticles = () => {
 
 exports.fetchArticleComments = (id) => {
   return db
-    .query(`SELECT * FROM comments WHERE comments.article_id = $1;`, [id])
+    .query(`SELECT * FROM articles WHERE article_id = $1`, [id])
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({
@@ -75,6 +75,14 @@ exports.fetchArticleComments = (id) => {
           msg: `Article id not found`,
         });
       }
+    })
+    .then(() => {
+      return db.query(
+        `SELECT * FROM comments WHERE comments.article_id = $1;`,
+        [id]
+      );
+    })
+    .then(({ rows }) => {
       return rows;
     });
 };

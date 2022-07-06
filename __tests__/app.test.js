@@ -238,4 +238,13 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe(`Bad Request`);
       });
   });
+  test("200: if article has no comments returns an empty array", async () => {
+    const articleID = 2;
+    return request(app)
+      .get(`/api/articles/${articleID}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toBeInstanceOf(Array);
+      });
+  });
 });
