@@ -5,6 +5,7 @@ const {
   patchVotes,
   getUsers,
   getArticles,
+  getArticleComments,
 } = require("./controllers/controllers");
 const {
   psqlErrorHandler,
@@ -25,6 +26,8 @@ app.patch("/api/articles/:article_id", patchVotes);
 app.get("/api/users", getUsers);
 
 app.get("/api/articles", getArticles);
+
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 //Error Handlers
 app.use(psqlErrorHandler);
