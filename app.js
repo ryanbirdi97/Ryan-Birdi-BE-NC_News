@@ -6,6 +6,7 @@ const {
   getUsers,
   getArticles,
   postArticleComment,
+  getArticleComments,
 } = require("./controllers/controllers");
 const {
   psqlErrorHandler,
@@ -28,6 +29,8 @@ app.get("/api/users", getUsers);
 app.get("/api/articles", getArticles);
 
 app.post("/api/articles/:article_id/comments", postArticleComment);
+
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 //Error Handlers
 app.use(psqlErrorHandler);

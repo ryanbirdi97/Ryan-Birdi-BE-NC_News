@@ -5,6 +5,7 @@ const {
   fetchUsers,
   fetchArticles,
   addComment,
+  fetchArticleComments,
 } = require("../models/models");
 
 exports.getTopics = (req, res) => {
@@ -42,10 +43,15 @@ exports.getUsers = (req, res) => {
   });
 };
 
-exports.getArticles = (req, res) => {
-  fetchArticles().then((articles) => {
-    res.status(200).send({ articles });
-  });
+exports.getArticles = (req, res, next) => {
+  const { sort_by, order, topic } = req.query;
+  fetchArticles(sort_by, order, topic)
+    .then((articles) => {
+      res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.postArticleComment = (req, res, next) => {
@@ -54,6 +60,17 @@ exports.postArticleComment = (req, res, next) => {
   addComment(article_id, newComment)
     .then((comment) => {
       res.status(201).send({ comment });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.getArticleComments = (req, res, next) => {
+  const { article_id } = req.params;
+  fetchArticleComments(article_id)
+    .then((comments) => {
+      res.status(200).send({ comments });
     })
     .catch((err) => {
       next(err);
