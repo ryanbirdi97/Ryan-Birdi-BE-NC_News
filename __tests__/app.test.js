@@ -461,6 +461,8 @@ describe("GET /api", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body).toBeInstanceOf(Object);
+        const json = require("../endpoints.json");
+        expect(body).toEqual(json);
       });
   });
 });
