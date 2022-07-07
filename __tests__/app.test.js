@@ -251,7 +251,6 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
-
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: request body accepts an object to post a comment", () => {
     const articleID = 1;
@@ -428,4 +427,29 @@ describe("GET /api/articles (queries)", () => {
   });
 });
 
-
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: deletes comment with the id given and returns no content", () => {
+    return request(app)
+      .delete("/api/comments/12")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  test("404: comment id does not exist", () => {
+    return request(app)
+      .delete("/api/comments/1200")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Comment does not exist");
+      });
+  });
+  test("400: comment id is not the correct datatype", () => {
+    return request(app)
+      .delete("/api/comments/erl")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad Request");
+      });
+  });
+});
