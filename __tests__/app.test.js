@@ -250,3 +250,182 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: request body accepts an object to post a comment", () => {
+    const articleID = 1;
+    const newComment = { username: "icellusedkars", body: "This is a test" };
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toBeInstanceOf(Object);
+        expect(body.comment).toMatchObject({
+          body: newComment.body,
+          votes: expect.any(Number),
+          author: newComment.username,
+          article_id: articleID,
+          created_at: expect.any(String),
+        });
+      });
+  });
+  test("400: if article id is wrong data type", () => {
+    const articleID = "dog";
+    const newComment = { username: "icellusedkars", body: "This is a test" };
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("404: if article id does not exist", () => {
+    const articleID = 1010;
+    const newComment = { username: "icellusedkars", body: "This is a test" };
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Article id not found");
+      });
+  });
+  test("400: if request body is an empty object", () => {
+    const articleID = 1;
+    const newComment = {};
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: if request body only has 1 key", () => {
+    const articleID = 1;
+    const newComment = { username: "icellusedkars" };
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+  test("400: if request body key is the wrong datatype", () => {
+    const articleID = 1;
+    const newComment = { username: "icellusedkars", body: 1 };
+    return request(app)
+      .post(`/api/articles/${articleID}/comments`)
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe("GET /api/articles (queries)", () => {
+  test("200: returned array is in date acending order", () => {
+    return request(app)
+      .get("/api/articles?order=ASC")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("created_at", {
+          descending: false,
+        });
+      });
+  });
+  test("400: if order query value is spelt wrong", () => {
+    return request(app)
+      .get("/api/articles?order=bsc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid order");
+      });
+  });
+  test("200: returned array is sorted in vote decending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("votes", {
+          descending: true,
+        });
+      });
+  });
+  test("400: if sort_by query value is spelt wrong", () => {
+    return request(app)
+      .get("/api/articles?sort_by=vots")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid sort by");
+      });
+  });
+  test("200: accepts topic query which filters articles of that topic", () => {
+    return request(app)
+      .get(`/api/articles?topic=mitch`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeInstanceOf(Array);
+        expect(body.articles).toHaveLength(11);
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: "mitch",
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("400: if topic query value is spelt wrong", () => {
+    return request(app)
+      .get("/api/articles?topic=dave")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid topic");
+      });
+  });
+  test("200: return array with 2 queries", () => {
+    return request(app)
+      .get("/api/articles?order=ASC&sort_by=votes")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("votes", {
+          descending: false,
+        });
+      });
+  });
+  test("200: return array with 3 queries given", () => {
+    return request(app)
+      .get("/api/articles?order=ASC&sort_by=votes&topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toBeSortedBy("votes", {
+          descending: false,
+        });
+        body.articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: "mitch",
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            comment_count: expect.any(Number),
+          });
+        });
+      });
+  });
+});
+
+
