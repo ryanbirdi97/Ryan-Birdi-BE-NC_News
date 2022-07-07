@@ -182,3 +182,10 @@ exports.fetchArticleComments = (id) => {
       return rows;
     });
 };
+
+exports.removeComment = (id) => {
+  return db.query(
+    `DELETE FROM comments WHERE comments.comment_id = $1 RETURNING *;`,
+    [id]
+  );
+};

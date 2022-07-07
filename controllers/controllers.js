@@ -4,10 +4,9 @@ const {
   updateVotes,
   fetchUsers,
   fetchArticles,
-
   addComment,
-
   fetchArticleComments,
+  removeComment,
 } = require("../models/models");
 
 exports.getTopics = (req, res) => {
@@ -84,6 +83,17 @@ exports.getArticleComments = (req, res, next) => {
   fetchArticleComments(article_id)
     .then((comments) => {
       res.status(200).send({ comments });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  removeComment(comment_id)
+    .then(() => {
+      res.status(204).send();
     })
     .catch((err) => {
       next(err);
