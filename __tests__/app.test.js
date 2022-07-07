@@ -436,4 +436,12 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(body).toEqual({});
       });
   });
+  test("404: comment id does not exist", () => {
+    return request(app)
+      .delete("/api/comments/1200")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Comment does not exist");
+      });
+  });
 });
