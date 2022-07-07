@@ -84,30 +84,22 @@ exports.fetchArticles = (
     });
   }
 
+  let queryStart =
+    "SELECT articles.*, COUNT(comment_id):: INT AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id ";
+  let queryEnd = `GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order}`;
   if (topic !== undefined) {
-    return db
-      .query(
-        `SELECT articles.*, COUNT(comment_id):: INT AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id WHERE articles.topic = $1 GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order}`,
-        [topic]
-      )
-      .then((result) => {
-        if (result.rows.length === 0) {
-          return Promise.reject({
-            status: 400,
-            msg: `Invalid topic`,
-          });
-        }
-        return result.rows;
-      });
-  } else {
-    return db
-      .query(
-        `SELECT articles.*, COUNT(comment_id):: INT AS comment_count FROM articles LEFT OUTER JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order}`
-      )
-      .then((result) => {
-        return result.rows;
-      });
+    queryEnd = `WHERE articles.topic = '${topic}' GROUP BY articles.article_id ORDER BY articles.${sort_by} ${order}`;
   }
+
+  return db.query(queryStart + queryEnd).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({
+        status: 400,
+        msg: `Invalid topic`,
+      });
+    }
+    return result.rows;
+  });
 };
 
 exports.addComment = (articleID, newComment) => {
