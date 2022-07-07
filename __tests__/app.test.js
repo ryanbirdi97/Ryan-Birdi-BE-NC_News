@@ -444,4 +444,12 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(body.msg).toEqual("Comment does not exist");
       });
   });
+  test("400: comment id is not the correct datatype", () => {
+    return request(app)
+      .delete("/api/comments/erl")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad Request");
+      });
+  });
 });
