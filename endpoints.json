@@ -9,6 +9,13 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [{ "username": "butter_bridge" }]
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all topics",
     "queries": ["author", "topic", "sort_by", "order"],
@@ -23,5 +30,70 @@
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of comments for the given article id",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "comment_id": 2,
+        "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+        "article_id": 1,
+        "author": "butter_bridge",
+        "votes": 14,
+        "created_at": "2020-10-31T03:03:00.000Z"
+      }
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "adds a new comment to the article determined by the id provided, serves the updated comment object",
+    "queries": [],
+    "example request": { "username": "log_lady", "body": "I love pitch gum" },
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "I love pitch gum",
+          "votes": 100,
+          "author": "log_lady",
+          "article_id": 1,
+          "created_at": 1594329060000
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves a single article object by the article Id provided",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": 1594329060000,
+        "votes": 100
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Allows user to increase or decrease of the vote count and returns the updated object",
+    "queries": [],
+    "exampleRequest": { "inc_votes": 100 },
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": 1594329060000,
+        "votes": 100
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Removes the comment with the given comment id from the database",
+    "queries": []
   }
 }

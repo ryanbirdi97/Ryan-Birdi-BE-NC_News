@@ -8,6 +8,7 @@ const {
   fetchArticleComments,
   removeComment,
 } = require("../models/models");
+const fetchApiEndpoints = require("../endpoints.json");
 
 exports.getTopics = (req, res) => {
   fetchTopics().then((topics) => {
@@ -98,4 +99,8 @@ exports.deleteComment = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.getApi = (req, res, next) => {
+  res.status(200).send(fetchApiEndpoints);
 };
