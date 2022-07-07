@@ -8,6 +8,7 @@ const {
   postArticleComment,
   getArticleComments,
   deleteComment,
+  getApi,
 } = require("./controllers/controllers");
 const {
   psqlErrorHandler,
@@ -34,6 +35,8 @@ app.post("/api/articles/:article_id/comments", postArticleComment);
 app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.delete("/api/comments/:comment_id", deleteComment);
+
+app.get("/api", getApi);
 
 //Error Handlers
 app.use(psqlErrorHandler);
